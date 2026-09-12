@@ -1,16 +1,16 @@
 /* =====================================================
-   Gautam & Shruti — Wedding Invitation
+   Gautam & Shruti — Engagement Invitation
    EDIT: search "EDIT:" for the spots you'll want to touch
    ===================================================== */
 
 /* ---------- EDIT: the big day & time (used by the countdown + scratch reveal) ---------- */
-const WEDDING_DATE = new Date('2026-10-22T19:00:00+05:30');
+const ENGAGEMENT_DATE = new Date('2026-10-22T19:00:00+05:30');
 
 /* ---------- EDIT: Our Story chapters ---------- */
 const STORY = [
   { icon: '💌', meta: '20th October 2022', title: 'First Met', text: 'Add a short line about how Gautam & Shruti first met.' },
   { icon: '💍', meta: '2nd October 2023', title: 'The Proposal', text: 'Add a short line about the proposal here.' },
-  { icon: '💒', meta: '22nd October 2026', title: 'The Wedding', text: 'And now, together with their families, they say "I do".' }
+  { icon: '💍', meta: '22nd October 2026', title: 'The Engagement', text: 'And now, together with their families, they say yes to forever.' }
 ];
 
 /* ---------- EDIT: fun couple comparisons, him % out of 100 ---------- */
@@ -19,14 +19,14 @@ const SCOREBOARD = [
   { label: 'Who takes longer to get ready', him: 20 },
   { label: 'Who is the better cook', him: 45 },
   { label: 'Who wins the arguments', him: 35 },
-  { label: 'Who is more excited for the wedding', him: 50 }
+  { label: 'Who is more excited for the engagement', him: 50 }
 ];
 
 /* ---------- EDIT: the celebrations — fill in what you know, leave the rest as-is ---------- */
 const EVENTS = [
   { icon: '🌿', label: 'Function', name: 'Mehendi', date: 'Add date', time: 'Add time', venue: 'Add venue' },
   { icon: '🎶', label: 'Function', name: 'Sangeet', date: 'Add date', time: 'Add time', venue: 'Add venue' },
-  { icon: '💍', label: 'Function', name: 'Wedding Ceremony', date: 'Thursday, 22 October 2026', time: '7:00 PM onwards', venue: 'Starland Banquets, 99 Satguru Ram Singh Marg, New Delhi, DL' },
+  { icon: '💍', label: 'Function', name: 'Engagement Ceremony', date: 'Thursday, 22 October 2026', time: '7:00 PM onwards', venue: 'Starland Banquets, 99 Satguru Ram Singh Marg, New Delhi, DL' },
   { icon: '🎉', label: 'Function', name: 'Reception', date: 'Add date', time: 'Add time', venue: 'Add venue' }
 ];
 
@@ -37,7 +37,7 @@ const KIT = [
   { icon: '📸', title: 'Camera Ready', text: 'Someone will always be filming a reel — smile through it.' },
   { icon: '🧧', title: 'Shagun Envelope', text: 'Keep it handy, cash or UPI, your call.' },
   { icon: '🕺', title: 'Dance Moves', text: 'Practice at least one signature step before the Sangeet.' },
-  { icon: '☕', title: 'Power Naps', text: 'Two-day weddings run on chai and short naps. Budget both.' }
+  { icon: '☕', title: 'Power Naps', text: 'Engagement season runs on chai and short naps. Budget both.' }
 ];
 
 /* ---------- Random "aunty" questions ---------- */
@@ -48,7 +48,7 @@ const AUNTY_QUOTES = [
   'Why are you still single, beta?',
   'Love marriage or arranged, tell me honestly.',
   'Have you tried the paneer? I made your plate myself.',
-  'Will you also wear this much makeup at your own wedding?'
+  'Will you also wear this much makeup at your own engagement?'
 ];
 
 /* ---------- EDIT: travel & stay ---------- */
@@ -254,31 +254,115 @@ function renderStory(){
   initReveal();
 }
 
+/* ---------- Tug-of-war reaction lines: drag it to one side and they react ---------- */
+const TUG_REACTIONS = {
+  groom: {
+    accused: ['😤 That\'s so not true!', '😠 Wait, what?!', '🙄 Since when?!', '😳 Who told you that?'],
+    teasing: ['😏 Aww, did I upset you?', '😅 Maybe a little true though...', '😬 Don\'t be mad...', '🙈 I said what I said.']
+  },
+  bride: {
+    accused: ['😠 Excuse me?!', '😤 That is SO not true!', '🙄 Who told you that?', '😳 I did NOT!'],
+    teasing: ['😬 I didn\'t say anything!', '😅 It wasn\'t me, I swear...', '🥲 Please don\'t look at me like that', '🙈 No comment.']
+  }
+};
+function randomFrom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
 /* ===================== RENDER: SCOREBOARD ===================== */
 function renderScoreboard(){
   const wrap = document.getElementById('score-rows');
   if (!wrap) return;
-  SCOREBOARD.forEach(row => {
+  SCOREBOARD.forEach((row, i) => {
     const div = document.createElement('div');
     div.className = 'score-row';
     div.innerHTML = `
       <div class="score-row-label">${row.label}</div>
-      <div class="score-bar"><div class="score-bar-fill" style="width:0%" data-target="${row.him}"></div></div>`;
+      <div class="tug-bar">
+        <div class="tug-avatar-wrap">
+          <div class="tug-avatar tug-groom"><img src="character_images/groom.png" alt="Gautam"></div>
+          <span class="tug-bubble" data-bubble="groom"></span>
+        </div>
+        <div class="tug-track" data-row="${i}" role="slider" tabindex="0"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="${row.him}"
+             aria-label="${row.label} — drag toward Gautam or Shruti">
+          <div class="tug-fill" style="width:${row.him}%"></div>
+          <div class="tug-handle" style="left:${row.him}%"></div>
+        </div>
+        <div class="tug-avatar-wrap">
+          <div class="tug-avatar tug-bride"><img src="character_images/bride.png" alt="Shruti"></div>
+          <span class="tug-bubble" data-bubble="bride"></span>
+        </div>
+      </div>`;
     wrap.appendChild(div);
   });
+  initTugBars();
+}
 
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting){
-        entry.target.querySelectorAll('.score-bar-fill').forEach(fill => {
-          fill.style.width = fill.getAttribute('data-target') + '%';
-        });
-        io.unobserve(entry.target);
+function initTugBars(){
+  document.querySelectorAll('.tug-track').forEach(track => {
+    const row = track.closest('.score-row');
+    const fill = row.querySelector('.tug-fill');
+    const handle = row.querySelector('.tug-handle');
+    const groomBubble = row.querySelector('[data-bubble="groom"]');
+    const brideBubble = row.querySelector('[data-bubble="bride"]');
+    let zone = 'mid';
+    let dragging = false;
+
+    function showBubble(el, text){
+      el.textContent = text;
+      el.classList.add('show');
+    }
+    function hideBubble(el){ el.classList.remove('show'); }
+
+    function setPercent(pct, triggerReaction){
+      pct = Math.max(0, Math.min(100, pct));
+      fill.style.width = pct + '%';
+      handle.style.left = pct + '%';
+      track.setAttribute('aria-valuenow', String(Math.round(pct)));
+
+      let newZone = 'mid';
+      if (pct <= 15) newZone = 'groom';
+      else if (pct >= 85) newZone = 'bride';
+
+      if (triggerReaction && newZone !== zone && newZone !== 'mid'){
+        if (newZone === 'groom'){
+          showBubble(groomBubble, randomFrom(TUG_REACTIONS.groom.accused));
+          showBubble(brideBubble, randomFrom(TUG_REACTIONS.bride.teasing));
+        } else {
+          showBubble(brideBubble, randomFrom(TUG_REACTIONS.bride.accused));
+          showBubble(groomBubble, randomFrom(TUG_REACTIONS.groom.teasing));
+        }
       }
+      if (newZone === 'mid'){
+        hideBubble(groomBubble);
+        hideBubble(brideBubble);
+      }
+      zone = newZone;
+    }
+
+    function pctFromEvent(e){
+      const rect = track.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      return (x / rect.width) * 100;
+    }
+
+    track.addEventListener('pointerdown', e => {
+      dragging = true;
+      track.setPointerCapture(e.pointerId);
+      setPercent(pctFromEvent(e), true);
     });
-  }, { threshold: 0.3 });
-  const card = document.querySelector('.score-card');
-  if (card) io.observe(card);
+    track.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      setPercent(pctFromEvent(e), true);
+    });
+    track.addEventListener('pointerup', () => { dragging = false; });
+    track.addEventListener('pointercancel', () => { dragging = false; });
+
+    track.addEventListener('keydown', e => {
+      const current = parseFloat(handle.style.left) || 50;
+      if (e.key === 'ArrowLeft'){ setPercent(current - 5, true); e.preventDefault(); }
+      if (e.key === 'ArrowRight'){ setPercent(current + 5, true); e.preventDefault(); }
+    });
+  });
 }
 
 /* ===================== RENDER: EVENTS ===================== */
@@ -450,10 +534,10 @@ function initCountdown(){
   if (!days) return;
 
   function tick(){
-    const diff = WEDDING_DATE.getTime() - Date.now();
+    const diff = ENGAGEMENT_DATE.getTime() - Date.now();
     if (diff <= 0){
       days.textContent = hours.textContent = mins.textContent = secs.textContent = '0';
-      if (msg) msg.textContent = 'They said "I do"! 🎉';
+      if (msg) msg.textContent = "They're engaged! 💍";
       clearInterval(timer);
       return;
     }
