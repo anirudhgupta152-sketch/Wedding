@@ -1,5 +1,5 @@
 /* =====================================================
-   Gautam & Shruti — Wedding Invitation
+   Gautam & Shruti — Engagement Invitation
    EDIT: search "EDIT:" for the spots you'll want to touch
    ===================================================== */
 
@@ -301,11 +301,49 @@ section{padding:100px 20px;}
 .score-who i{width:9px;height:9px;border-radius:50%;display:inline-block;}
 .score-him i{background:var(--maroon);}
 .score-her i{background:var(--gold);}
-.score-rows{display:flex;flex-direction:column;gap:14px;}
-.score-row{display:flex;flex-direction:column;gap:6px;}
+.score-rows{display:flex;flex-direction:column;gap:22px;}
+.score-row{display:flex;flex-direction:column;gap:8px;}
 .score-row-label{font-size:14px;color:var(--ink);text-align:center;}
-.score-bar{position:relative;height:10px;border-radius:999px;background:rgba(109,31,43,.1);overflow:hidden;}
-.score-bar-fill{position:absolute;top:0;bottom:0;left:0;background:linear-gradient(90deg,var(--maroon),var(--gold));border-radius:999px;transition:width 1s ease;}
+
+.tug-bar{display:flex;align-items:center;gap:10px;}
+.tug-avatar-wrap{position:relative;flex:none;}
+.tug-avatar{
+  position:relative;width:60px;height:84px;border-radius:14px;overflow:hidden;
+  border:2px solid #fffdf8;box-shadow:0 4px 10px rgba(109,31,43,.18);background:var(--cream-2);
+}
+.tug-avatar img{position:absolute;top:0;left:0;width:154px;height:231px;max-width:none;}
+.tug-groom img{transform:translate(-45px,0);}
+.tug-bride img{transform:translate(-45px,0);}
+.tug-track{
+  position:relative;flex:1;height:12px;border-radius:999px;background:rgba(109,31,43,.12);
+  cursor:grab;touch-action:none;
+}
+.tug-track:active{cursor:grabbing;}
+.tug-fill{position:absolute;top:0;bottom:0;left:0;background:linear-gradient(90deg,var(--maroon),var(--gold));border-radius:999px;}
+.tug-handle{
+  position:absolute;top:50%;width:20px;height:20px;border-radius:50%;
+  background:#fffdf8;border:3px solid var(--maroon);
+  transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.25);pointer-events:none;
+}
+.tug-bubble{
+  position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%) translateY(4px) scale(.9);
+  background:var(--maroon-dark);color:var(--cream);font-size:12px;white-space:nowrap;
+  padding:6px 10px;border-radius:10px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;z-index:5;
+}
+.tug-bubble::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--maroon-dark);
+}
+.tug-bubble.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+.tug-hint{text-align:center;font-size:12px;color:var(--maroon-2);margin-top:2px;}
+@media(max-width:520px){
+  .tug-avatar{width:46px;height:64px;}
+  .tug-avatar img{width:118px;height:177px;}
+  .tug-groom img{transform:translate(-35px,0);}
+  .tug-bride img{transform:translate(-35px,0);}
+}
 
 /* ===================== EVENTS ===================== */
 .events-board{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:900px;margin:0 auto;}
